@@ -21,14 +21,17 @@ public class GameManager : MonoBehaviour
     //skor maksimal
     public int maxScore;
 
+    //is debug window show or not
+    private bool isWindowShow = false;
+    
     // Start is called before the first frame update
     void Start()
     {
         //inisialisasi
         player1Rb = GetComponent<Rigidbody2D>();
         playerRb2 = GetComponent<Rigidbody2D>();
-        ballRb = GetComponent<Rigidbody2D>();
-        ballCollider = GetComponent<CircleCollider2D>();
+        ballRb = ball.GetComponent<Rigidbody2D>();
+        ballCollider = ball.GetComponent<CircleCollider2D>();
     }
 
     // Update is called once per frame
@@ -49,9 +52,13 @@ public class GameManager : MonoBehaviour
             //reset score kedua pemain
             player1.resetScore();
             player2.resetScore();
-
             //restart game
             ball.SendMessage("restartGame",0.5f,SendMessageOptions.RequireReceiver);
+        }
+        // Toggle nilai debug window ketika pemain mengeklik tombol ini.
+        if (GUI.Button(new Rect(Screen.width/2 - 60, Screen.height - 73, 120, 53), "TOGGLE\nDEBUG INFO"))
+        {
+            isWindowShow = !isWindowShow;
         }
 
         if(player1.score() == maxScore)
@@ -61,6 +68,11 @@ public class GameManager : MonoBehaviour
 
             //dan reset bola menjadi ke tengah
             ball.SendMessage("resetBall",null,SendMessageOptions.RequireReceiver);
+
+            //reset posisi player
+            player1.resetPosition(-15,0);
+            player2.resetPosition(15,0);
+
         }
         else if(player2.score() == maxScore)
         {
@@ -69,6 +81,49 @@ public class GameManager : MonoBehaviour
 
             //dan reset bola menjadi ke tengah
             ball.SendMessage("resetBall",null,SendMessageOptions.RequireReceiver);
+            
+            //reset posisi player
+            player1.resetPosition(-15,0);
+            player2.resetPosition(15,0);
+        }
+
+         //window debug info
+        //jika variable true maka tampilkan
+        if(isWindowShow)
+        {
+            Color oldColor = GUI.backgroundColor;
+            GUI.backgroundColor = Color.red;
+
+            //variable variable fisika untuk debug
+            float ballMass = ballRb.mass;
+            Vector2 ballVelocity = ballRb.velocity; 
+            float ballSpeed = ballRb.velocity.magnitude;
+            Vector2 ballMomentum = ballMass * ballVelocity;
+            float ballFriction = ballCollider.friction;
+
+            //impulse
+            float impulsePlayer1X = player1.lastContactPoint().normalImpulse;
+            float impulsePlayer1Y = player1.lastContactPoint().tangentImpulse;
+            float impulsePlayer2X = player2.lastContactPoint().normalImpulse;
+            float impulsePlayer2Y = player2.lastContactPoint().tangentImpulse;
+
+            string debugText = 
+            "Ball Mass: "+ballMass+"\n" +
+            "Ball Velocity: "+ballVelocity+"\n"+
+            "Ball Speed: "+ballSpeed+"\n"+
+            "Ball Momentum: "+ballMomentum+"\n"+
+            "Ball friction: "+ballFriction+"\n"+
+            "Last impulse from player 1 = (" + impulsePlayer1X + ", " + impulsePlayer1Y + ")\n" +
+            "Last impulse from player 2 = (" + impulsePlayer2X + ", " + impulsePlayer2Y + ")\n";
+
+            //tampilkan debug window
+            GUIStyle guiStyle = new GUIStyle(GUI.skin.textArea);
+            guiStyle.alignment = TextAnchor.UpperCenter;
+            GUI.TextArea(new Rect(Screen.width/2 - 200, Screen.height - 200, 400, 110), debugText, guiStyle);
+            // Kembalikan warna lama GUI
+            GUI.backgroundColor = oldColor;
+
         }
     }
+
 }

@@ -70,6 +70,7 @@ public class BallControl : MonoBehaviour
         Invoke("pushBall",1);
     }
 
+    //method dibawah ini berfungsi untuk menampilkan debug nantinya
     //ketika bola beranjak dari tumbukan dengan raket
     void OnCollisionExit2D(Collision2D other)
     {

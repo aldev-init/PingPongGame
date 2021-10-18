@@ -26,7 +26,6 @@ public class SideWall : MonoBehaviour
         if(other.name == "Ball")
         {
             player.incrementScore();
-            Debug.Log(player.scorePlayer);
         }
 
         //jika score masih dibawah maxscore game manager maka game akan terus berjalan

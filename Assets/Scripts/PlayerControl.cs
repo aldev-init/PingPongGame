@@ -97,9 +97,19 @@ public class PlayerControl : MonoBehaviour
         return scorePlayer;
     }
 
+    //untuk reset posisi raket
+    public void resetPosition(int x, int y)
+    {
+        Vector2 playerPosition = rb2D.velocity;
+        playerPosition.y = y;
+        playerPosition.x = x;
+        
+        transform.position = playerPosition;
+    }
     //sedikit catatan
     //vector2 dan vector3 digunakan untuk mengambil sumbu x,y,z
 
+    //method dibawah ini digunakan nantinya untuk menampilkan debug
     //method untuk  mengambil/mengembalikan lastContact
     public ContactPoint2D lastContactPoint()
     {
@@ -113,4 +123,6 @@ public class PlayerControl : MonoBehaviour
             lastContact = other.GetContact(0);
         }
     }
+
+
 }
